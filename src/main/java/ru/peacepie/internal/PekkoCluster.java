@@ -3,10 +3,16 @@ package ru.peacepie.internal;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.pekko.actor.typed.ActorRef;
 import org.apache.pekko.actor.typed.ActorSystem;
+import org.apache.pekko.actor.typed.Props;
 import org.apache.pekko.actor.typed.javadsl.Behaviors;
 import org.apache.pekko.cluster.MemberStatus;
 import org.apache.pekko.cluster.typed.Cluster;
+import org.apache.pekko.cluster.typed.ClusterSingleton;
+import org.apache.pekko.cluster.typed.SingletonActor;
+import ru.peacepie.admin.NodeAdminActor;
+import ru.peacepie.admin.SystemAdminActor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +30,8 @@ public final class PekkoCluster {
     private ActorSystem<Void> actorSystem;
 
     private Cluster cluster;
+    private ActorRef<SystemAdminActor.Command> systemAdminActor;
+    private ActorRef<NodeAdminActor.Command> nodeAdminActor;
 
     public void startup() {
         if (actorSystem != null) {
@@ -47,6 +55,21 @@ public final class PekkoCluster {
             log.debug("Initializing Pekko Cluster extension");
 
             cluster = Cluster.get(actorSystem);
+
+            log.debug("Starting node-local NodeAdminActor");
+            nodeAdminActor = actorSystem.systemActorOf(
+                    NodeAdminActor.create(),
+                    "node-admin",
+                    Props.empty()
+            );
+
+            log.debug("Starting cluster-wide SystemAdminActor singleton");
+            systemAdminActor = ClusterSingleton.get(actorSystem).init(
+                    SingletonActor.of(
+                            SystemAdminActor.create(),
+                            "system-admin"
+                    )
+            );
 
             log.info("Waiting for own cluster member to become Up");
 
@@ -153,6 +176,8 @@ public final class PekkoCluster {
 
         actorSystem = null;
         cluster = null;
+        systemAdminActor = null;
+        nodeAdminActor = null;
 
         log.info("Peacepie cluster stopped");
     }
@@ -167,7 +192,19 @@ public final class PekkoCluster {
 
             actorSystem = null;
             cluster = null;
+            systemAdminActor = null;
+            nodeAdminActor = null;
         }
+    }
+
+    public ActorRef<SystemAdminActor.Command> systemAdminActor() {
+        ensureStarted();
+        return systemAdminActor;
+    }
+
+    public ActorRef<NodeAdminActor.Command> nodeAdminActor() {
+        ensureStarted();
+        return nodeAdminActor;
     }
 
     private void ensureStarted() {
