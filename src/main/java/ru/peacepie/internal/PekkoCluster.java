@@ -1,11 +1,7 @@
-
 package ru.peacepie.internal;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 import org.apache.pekko.actor.typed.ActorSystem;
 import org.apache.pekko.actor.typed.javadsl.Behaviors;
@@ -14,6 +10,9 @@ import org.apache.pekko.cluster.typed.Cluster;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ru.peacepie.utils.PeacepieConfig;
+
 
 public final class PekkoCluster {
 
@@ -36,29 +35,10 @@ public final class PekkoCluster {
         log.info("Starting Peacepie cluster");
 
         try {
-            Config config = ConfigFactory.load();
-
-            log.debug("Loading Pekko configuration");
-            log.debug("Actor provider: {}",
-                    config.getString("pekko.actor.provider"));
-
-            log.debug("Artery hostname: {}",
-                    config.getString(
-                            "pekko.remote.artery.canonical.hostname"
-                    ));
-
-            log.debug("Artery port: {}",
-                    config.getInt(
-                            "pekko.remote.artery.canonical.port"
-                    ));
-
-            Duration startupTimeout =
-                    config.getDuration("pekko.cluster.startup-timeout");
-
             actorSystem = ActorSystem.create(
                     Behaviors.empty(),
-                    "Peacepie",
-                    config
+                    PeacepieConfig.CONFIG.clusterName(),
+                    PeacepieConfig.CONFIG.asConfig()
             );
 
             log.info("Pekko ActorSystem created: {}",
@@ -70,7 +50,7 @@ public final class PekkoCluster {
 
             log.info("Waiting for own cluster member to become Up");
 
-            awaitMemberUp(startupTimeout);
+            awaitMemberUp(PeacepieConfig.CONFIG.startupTimeout());
 
             log.info("Own cluster member is Up: {}",
                     cluster.selfMember().address());
@@ -124,7 +104,6 @@ public final class PekkoCluster {
                 previousStatus = status;
             }
 
-            // Собственный узел достиг состояния Up.
             if (status.equals(MemberStatus.up())) {
                 return;
             }
@@ -150,7 +129,7 @@ public final class PekkoCluster {
             Thread.sleep(sleepMillis);
         }
     }
-    
+
     public void awaitTermination() {
         ensureStarted();
 
