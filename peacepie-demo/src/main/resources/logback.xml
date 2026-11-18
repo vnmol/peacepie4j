@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_PATH" value="${log.path:-./logs}"/>
+
+    <!-- Логи библиотеки Peacepie -->
+    <appender name="PEACEPIE_FILE"
+              class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/peacepie.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Логи Apache Pekko -->
+    <appender name="PEKKO_FILE"
+              class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/pekko.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Консоль demo-приложения -->
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Demo: только консоль -->
+    <logger name="ru.peacepie.demo" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Peacepie: только peacepie.log -->
+    <logger name="ru.peacepie" level="DEBUG" additivity="false">
+        <appender-ref ref="PEACEPIE_FILE"/>
+    </logger>
+
+    <!-- Pekko: только pekko.log -->
+    <logger name="org.apache.pekko" level="DEBUG" additivity="false">
+        <appender-ref ref="PEKKO_FILE"/>
+    </logger>
+
+    <!-- Остальные сообщения: консоль -->
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
