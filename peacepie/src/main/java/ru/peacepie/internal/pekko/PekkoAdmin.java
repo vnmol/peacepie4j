@@ -1,4 +1,4 @@
-package ru.peacepie.internal;
+package ru.peacepie.internal.pekko;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +13,7 @@ import org.apache.pekko.cluster.typed.ClusterSingleton;
 import org.apache.pekko.cluster.typed.SingletonActor;
 import ru.peacepie.admin.NodeAdminActor;
 import ru.peacepie.admin.SystemAdminActor;
+import ru.peacepie.plugin.api.PeacepieMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,19 +21,20 @@ import org.slf4j.LoggerFactory;
 import ru.peacepie.utils.PeacepieConfig;
 
 
-public final class PekkoCluster {
+public final class PekkoAdmin {
 
     private static final Logger log =
-            LoggerFactory.getLogger(PekkoCluster.class);
+            LoggerFactory.getLogger(PekkoAdmin.class);
 
     private static final long STATUS_CHECK_INTERVAL_MS = 100;
 
     private ActorSystem<Void> actorSystem;
 
     private Cluster cluster;
-    private ActorRef<SystemAdminActor.Command> systemAdminActor;
-    private ActorRef<NodeAdminActor.Command> nodeAdminActor;
-
+    private ActorRef<PeacepieMessage> systemAdminActor;
+    private ActorRef<PeacepieMessage> nodeAdminActor;
+    
+    
     public void startup() {
         if (actorSystem != null) {
             throw new IllegalStateException(
@@ -41,7 +43,7 @@ public final class PekkoCluster {
         }
 
         log.info("Starting Peacepie cluster");
-
+        
         try {
             actorSystem = ActorSystem.create(
                     Behaviors.empty(),
@@ -197,12 +199,12 @@ public final class PekkoCluster {
         }
     }
 
-    public ActorRef<SystemAdminActor.Command> systemAdminActor() {
+    public ActorRef<PeacepieMessage> systemAdminActor() {
         ensureStarted();
         return systemAdminActor;
     }
 
-    public ActorRef<NodeAdminActor.Command> nodeAdminActor() {
+    public ActorRef<PeacepieMessage> nodeAdminActor() {
         ensureStarted();
         return nodeAdminActor;
     }

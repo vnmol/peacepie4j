@@ -7,6 +7,7 @@ import java.util.List;
 import org.osgi.framework.Bundle;
 
 import ru.peacepie.plugin.api.PeacepieHandler;
+import ru.peacepie.plugin.api.PeacepieMessage;
 
 
 public final class HandlerRegistry {
@@ -47,7 +48,7 @@ public final class HandlerRegistry {
     }
 
     /** Вызывает каждый зарегистрированный обработчик; ошибка одного не мешает остальным. */
-    public void dispatch(String message) {
+    public void dispatch(PeacepieMessage message) {
         for (RegisteredHandler registered : List.copyOf(handlers)) {
             System.out.println("[Peacepie] -> "
                     + registered.bundle().getSymbolicName() + ": "

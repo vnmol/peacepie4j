@@ -1,37 +1,37 @@
 package ru.peacepie;
 
-import ru.peacepie.internal.PekkoCluster;
+import ru.peacepie.internal.pekko.PekkoAdmin;
 
 public class Peacepie {
 
-    private PekkoCluster cluster;
+    private PekkoAdmin pekkoAdmin;
 
     public Peacepie startup() {
-        if (cluster != null) {
+        if (pekkoAdmin != null) {
             throw new IllegalStateException(
                     "Peacepie has already been started"
             );
         }
 
-        cluster = new PekkoCluster();
-        cluster.startup();
+        pekkoAdmin = new PekkoAdmin();
+        pekkoAdmin.startup();
 
         return this;
     }
 
     public void awaitTermination() {
         ensureStarted();
-        cluster.awaitTermination();
+        pekkoAdmin.awaitTermination();
     }
 
     public void shutdown() {
         ensureStarted();
-        cluster.shutdown();
-        cluster = null;
+        pekkoAdmin.shutdown();
+        pekkoAdmin = null;
     }
 
     private void ensureStarted() {
-        if (cluster == null) {
+        if (pekkoAdmin == null) {
             throw new IllegalStateException(
                     "Peacepie has not been started"
             );

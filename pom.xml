@@ -18,7 +18,7 @@
 	<modules>
 		<module>peacepie</module>
 		<module>peacepie-plugin-api</module>
-		<module>peacepie-plugin-echo</module>
+		<module>peacepie-plugins</module>
 		<module>peacepie-plugin-test</module>
 		<module>peacepie-demo</module>
 	</modules>

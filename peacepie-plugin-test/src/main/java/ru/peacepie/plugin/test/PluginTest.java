@@ -15,6 +15,8 @@ import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 
+import ru.peacepie.plugin.api.PeacepieMessage;
+
 
 public final class PluginTest {
 
@@ -43,8 +45,9 @@ public final class PluginTest {
             Map<String, String> config = Map.of(
                     Constants.FRAMEWORK_STORAGE,
                     Path.of("target/felix-cache").toAbsolutePath().toString(),
-                    "org.osgi.framework.storage.clean", "onFirstInit",
-                    "org.osgi.framework.system.packages.extra",
+                    Constants.FRAMEWORK_STORAGE_CLEAN, 
+                    Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT,
+                    Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
                     "ru.peacepie.plugin.api");
 
             System.out.println("[Peacepie] Starting Apache Felix...");
@@ -87,7 +90,7 @@ public final class PluginTest {
                     + startedBundles.size());
             System.out.println("[Peacepie] Handlers registered: " + registry.size());
 
-            String message = args.length > 1 ? args[1] : "Hello";
+            PeacepieMessage message = PeacepieMessage.getMsg("01", "Hello!", null, null, null, 0,null);
             registry.dispatch(message);
             System.out.println("[Peacepie] All handlers executed.");
         } finally {

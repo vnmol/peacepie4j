@@ -38,6 +38,8 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(
                 new Thread(shutdown, "peacepie-shutdown")
         );
+        
+        System.out.println("ENTER");
 
         logger.info("Enter 'stop' to shutdown Peacepie");
 

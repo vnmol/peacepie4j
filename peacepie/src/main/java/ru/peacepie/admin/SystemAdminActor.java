@@ -5,12 +5,9 @@ import org.apache.pekko.actor.typed.javadsl.Behaviors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Cluster-wide administrative actor.
- *
- * This behavior is hosted by Pekko Cluster Singleton, so only one active
- * instance is responsible for cluster-wide administration at a time.
- */
+import ru.peacepie.plugin.api.PeacepieMessage;
+
+
 public final class SystemAdminActor {
 
     private static final Logger log =
@@ -19,16 +16,13 @@ public final class SystemAdminActor {
     private SystemAdminActor() {
     }
 
-    public interface Command {
-    }
-
-    public static Behavior<Command> create() {
+    public static Behavior<PeacepieMessage> create() {
         return Behaviors.setup(context -> {
             log.info("SystemAdminActor started: {}", context.getSelf());
-            return Behaviors.receive(Command.class)
-                    .onMessage(Command.class, command -> {
+            return Behaviors.receive(PeacepieMessage.class)
+                    .onMessage(PeacepieMessage.class, msg -> {
                         log.debug("SystemAdminActor received command: {}",
-                                command.getClass().getSimpleName());
+                                msg.getClass().getSimpleName());
                         return Behaviors.same();
                     })
                     .onSignal(org.apache.pekko.actor.typed.PostStop.class,

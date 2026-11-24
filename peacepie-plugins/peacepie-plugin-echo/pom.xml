@@ -6,7 +6,7 @@
 
 	<parent>
 		<groupId>ru.peacepie</groupId>
-		<artifactId>peacepie4j</artifactId>
+		<artifactId>peacepie-plugins</artifactId>
 		<version>0.0.1</version>
 	</parent>
 
