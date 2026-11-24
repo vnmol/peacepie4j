@@ -1,8 +1,14 @@
 package ru.peacepie;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ru.peacepie.internal.bootstrap.BootstrapAdmin;
 import ru.peacepie.internal.pekko.PekkoAdmin;
 
 public class Peacepie {
+
+    Logger logger = LoggerFactory.getLogger(Peacepie.class);
 
     private PekkoAdmin pekkoAdmin;
 
@@ -15,7 +21,12 @@ public class Peacepie {
 
         pekkoAdmin = new PekkoAdmin();
         pekkoAdmin.startup();
-
+        try {
+        	BootstrapAdmin.startup(pekkoAdmin);
+        } catch (Exception e) {
+        	logger.error("Bootstrap has failed", e);
+        }
+        
         return this;
     }
 

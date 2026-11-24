@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
     	
-    	PeacepieUtils.devInit();
+    	PeacepieUtils.devInit(); // Пересоздание папки логов только для разработки 
     	
         Logger logger = LoggerFactory.getLogger(Main.class);
 
@@ -39,8 +39,6 @@ public class Main {
                 new Thread(shutdown, "peacepie-shutdown")
         );
         
-        System.out.println("ENTER");
-
         logger.info("Enter 'stop' to shutdown Peacepie");
 
         try (BufferedReader reader =

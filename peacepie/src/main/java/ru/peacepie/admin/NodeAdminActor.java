@@ -23,8 +23,7 @@ public final class NodeAdminActor {
                     context.getSystem().name());
             return Behaviors.receive(PeacepieMessage.class)
                     .onMessage(PeacepieMessage.class, msg -> {
-                        log.debug("NodeAdminActor received command: {}",
-                                msg.getClass().getSimpleName());
+                        log.debug("NodeAdminActor received command: {}", msg);
                         return Behaviors.same();
                     })
                     .onSignal(org.apache.pekko.actor.typed.PostStop.class,
